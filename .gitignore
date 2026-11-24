@@ -1,0 +1,8 @@
+node_modules
+.next
+shots
+server.log
+opencode-build.log
+matrix.html
+dash.html
+.vercel

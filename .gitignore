@@ -6,3 +6,5 @@ opencode-build.log
 matrix.html
 dash.html
 .vercel
+opencode-kit.log
+.tmp-*

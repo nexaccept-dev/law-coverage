@@ -102,3 +102,26 @@
 - GitHub プライベートリポジトリ（nexaccept-dev）
 - 検証結果の記録（期待状態と実際の判定の対応表）
 - ひな形キット：バンドル仕様（本書3.）＋frontmatter テンプレート＋最小サンプルバンドル。新しい領域（例：社会保険、個人情報保護）や新しいシステムを作るときは、これをコピーして law ライブラリと社内文書を差し替えるところから始める。
+
+## 9. エージェントキット（2026-11-24追加）
+「クローン → エージェントに対象システムを調査させる → バンドル生成 → 充足率をダッシュボードで確認する」運用のための道具一式。詳細仕様は `KIT-SPEC.md`。
+
+### 9-1. CLIチェッカー
+- コマンド：`npm run check -- --bundle <dir> [--json]`
+- `lib/` の判定ロジック（`loadBundle` / 判定エンジン）を再利用し、Web画面と同じ結果を出す。判定ロジックの複製は持たない。
+- テキスト出力：バンドル名、判定日、充足率、状態別件数、ギャップ一覧（id／タイトル／状態／理由）、形式エラー一覧。
+- JSON出力：`{ bundle, today, summary: { total, coverageRate, counts }, gaps: [{id,title,state,reason}], formatErrors: [{file,message}], laws: [{id,title,domain,state,reason}] }`
+- 終了コード：形式エラーが1件以上なら 1、なければ 0。
+- 実装：`scripts/check.ts`（`tsx` で TypeScript の lib を直接実行）。
+
+### 9-2. バンドル初期化コマンド
+- コマンド：`npm run init-bundle -- --out <dir> [--force]`
+- 既定バンドル（`bundle/`）から `type: law` のファイルだけを抽出して `<dir>` にコピーし、案内文 `README.txt` を置く。
+  - `README.txt` にするのは、バンドル内の `.md` がすべて文書として読み込まれ、frontmatter 無しだと形式エラーになるため。
+- `<dir>` が存在し中身がある場合は、`--force` なしではエラー終了する。
+- 実装：`scripts/init-bundle.ts`。
+
+### 9-3. 指示書パッケージ
+- `AGENT-INSTRUCTIONS.md`（リポジトリ直下）：エージェント共通の手順書。全体フロー、法律ファイルの編集禁止、調査観点、文書化の規則、ガードレール、検証ループ、報告形式を規定する。
+- `.claude/commands/coverage-check.md`：Claude Code 用スラッシュコマンド。引数の対象システムパスを受け取り、`AGENT-INSTRUCTIONS.md` に従うよう指示する。
+- `README.md`（リポジトリ直下）：プロダクト概要、想定運用フロー、コマンド一覧、データ形式の要点。

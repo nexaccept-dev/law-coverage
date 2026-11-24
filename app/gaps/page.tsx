@@ -31,6 +31,7 @@ function LinkedDocs({ result }: { result: LawResult }) {
     ...result.rules,
     ...result.procedures,
     ...result.manuals,
+    ...result.settings,
     ...result.evidences,
   ];
   if (docs.length === 0) {

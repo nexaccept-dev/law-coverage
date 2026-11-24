@@ -22,6 +22,9 @@ export default function ReportPage() {
   const total = bundle.laws.length;
   const excluded = bundle.statusCounts.excluded;
   const gaps = total - excluded - bundle.statusCounts.covered;
+  const settingCoveredLaws = bundle.lawResults.filter(
+    (result) => result.settings.length > 0,
+  );
 
   const docTypeCounts = bundle.docs.reduce<Record<string, number>>(
     (accumulator, doc) => {
@@ -99,7 +102,8 @@ export default function ReportPage() {
           <span className="note">
             全 {bundle.docs.length} ファイル（law {docTypeCounts.law ?? 0} / rule{" "}
             {docTypeCounts.rule ?? 0} / procedure {docTypeCounts.procedure ?? 0} /
-            manual {docTypeCounts.manual ?? 0} / evidence{" "}
+            manual {docTypeCounts.manual ?? 0} / setting{" "}
+            {docTypeCounts.setting ?? 0} / evidence{" "}
             {docTypeCounts.evidence ?? 0} / decision {docTypeCounts.decision ?? 0}）
           </span>
         </div>
@@ -290,11 +294,51 @@ export default function ReportPage() {
         </div>
       </div>
 
+      <div className="section">
+        <div className="section-head">
+          <h2>設定でカバーされている要件</h2>
+          <span className="note">
+            設定文書（type: setting）が covers している要件。設定は変更されやすいため、設定依存の要件として確認できます。
+          </span>
+        </div>
+        <div className="card">
+          <p className="small" style={{ marginTop: 0 }}>
+            設定でカバーされている要件: <strong>{settingCoveredLaws.length}件</strong>
+          </p>
+          {settingCoveredLaws.length === 0 ? (
+            <p className="empty">設定文書でカバーされている要件はありません。</p>
+          ) : (
+            <ul className="plain-list">
+              {settingCoveredLaws.map((result) => (
+                <li key={result.law.id}>
+                  <div className="title-line">
+                    <Link href={`/law/${result.law.id}`}>
+                      <strong>{result.law.title}</strong>
+                    </Link>
+                    <span className="mono tiny muted">{result.law.id}</span>
+                  </div>
+                  <div className="tiny muted">
+                    設定文書:{" "}
+                    {result.settings.map((doc, index) => (
+                      <span key={doc.id}>
+                        {index > 0 ? "、" : ""}
+                        <TypeBadge type="setting" />{" "}
+                        <Link href={`/doc/${doc.id}`}>{doc.title}</Link>
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
       <div className="grid-2 section">
         <div>
           <div className="section-head">
             <h2>過剰・棚卸し対象（孤立文書）</h2>
-            <span className="note">どの law にも covers されていない規則・手順・マニュアル</span>
+            <span className="note">どの law にも covers されていない規則・手順・マニュアル・設定</span>
           </div>
           <div className="card">
             {diagnostics.orphanDocs.length === 0 ? (
@@ -337,6 +381,7 @@ export default function ReportPage() {
                     { label: "規則", docs: bias.rules },
                     { label: "手順", docs: bias.procedures },
                     { label: "マニュアル", docs: bias.manuals },
+                    { label: "設定", docs: bias.settings },
                   ].filter((group) => group.docs.length > 1);
                   return (
                     <li className="list-row" key={bias.lawId}>

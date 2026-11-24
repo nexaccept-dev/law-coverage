@@ -74,9 +74,10 @@ function readmeText(lawCount: number): string {
 社内文書の frontmatter（必須項目）
 --------------------------------
 共通: id / type / title / domain / verified
-- rule / procedure / manual:
-    type: rule（または procedure / manual）
+- rule / procedure / manual / setting:
+    type: rule（または procedure / manual / setting）
     covers: ["law-lsa-001"]   # 対応する law の id。推測で付けない。
+    # setting は設定の場所と内容を本文に書く（値の機械照合はしない）。
 - evidence:
     type: evidence
     supports: ["law-lsa-007", "rule-model-021"]  # law または rule の id

@@ -76,6 +76,9 @@ async function main(): Promise<void> {
   const gaps = data.lawResults
     .filter((result) => result.status !== "covered")
     .sort(compareGapResults);
+  const settingCovered = data.lawResults.filter(
+    (result) => result.settings.length > 0,
+  );
   const formatErrors = data.diagnostics.formatIssues;
 
   if (args.json) {
@@ -103,6 +106,7 @@ async function main(): Promise<void> {
         domain: result.law.domain,
         state: result.status,
         reason: result.reason,
+        viaSetting: result.settings.length > 0,
       })),
     };
     console.log(JSON.stringify(payload, null, 2));
@@ -118,6 +122,7 @@ async function main(): Promise<void> {
     for (const status of STATUS_ORDER) {
       console.log(`  ${statusText(status)}: ${data.statusCounts[status]}`);
     }
+    console.log(`設定でカバー: ${settingCovered.length}件`);
 
     console.log(`ギャップ (${gaps.length}件):`);
     if (gaps.length === 0) {

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
+import { TypeBadge } from "@/components/TypeBadge";
 import { loadBundle } from "@/lib/bundle";
 import { percent } from "@/lib/format";
 import type { Doc, LawResult } from "@/lib/types";
@@ -33,6 +34,12 @@ function MatrixRow({ result }: { result: LawResult }) {
       <td>{countCell(result.rules)}</td>
       <td>{countCell(result.procedures)}</td>
       <td>{countCell(result.manuals)}</td>
+      <td>
+        <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+          {countCell(result.settings)}
+          {result.settings.length > 0 ? <TypeBadge type="setting" /> : null}
+        </div>
+      </td>
       <td>
         <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
           {countCell(result.evidences)}
@@ -69,7 +76,7 @@ export default function MatrixPage() {
       <PageHeader
         eyebrow="Coverage Matrix"
         title="カバレッジマトリクス"
-        description="行＝法令要件（領域でグルーピング）、列＝紐づく規則・手順・マニュアル・証跡。セルの数字は件数です。要件名から詳細へ移動できます。"
+        description="行＝法令要件（領域でグルーピング）、列＝紐づく規則・手順・マニュアル・設定・証跡。セルの数字は件数です。要件名から詳細へ移動できます。"
       />
 
       <div className="stat-grid" style={{ marginBottom: 16 }}>
@@ -94,6 +101,7 @@ export default function MatrixPage() {
               <th style={{ width: 74 }}>規則</th>
               <th style={{ width: 74 }}>手順</th>
               <th style={{ width: 90 }}>マニュアル</th>
+              <th style={{ width: 100 }}>設定</th>
               <th style={{ width: 120 }}>証跡</th>
               <th style={{ width: 100 }}>状態</th>
             </tr>
@@ -112,7 +120,7 @@ export default function MatrixPage() {
       </div>
 
       <p className="tiny muted">
-        「—」は紐づく文書がないセルです。証跡の「期限切れ」は有効期限を過ぎた証跡の件数で、有効な証跡が別にあれば要件の状態には影響しません。
+        「—」は紐づく文書がないセルです。「設定」チップは、その要件が設定文書でカバーされていることを示します。証跡の「期限切れ」は有効期限を過ぎた証跡の件数で、有効な証跡が別にあれば要件の状態には影響しません。
       </p>
     </>
   );
@@ -130,7 +138,7 @@ function DomainGroup({
   return (
     <>
       <tr className="domain-row">
-        <td colSpan={6}>
+        <td colSpan={7}>
           {domain}（{results.length}件・対応済み率 {percent(rate)}）
         </td>
       </tr>

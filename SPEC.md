@@ -29,8 +29,8 @@
 バンドルは1ディレクトリに Markdown ファイルを置く。各ファイルは frontmatter（YAML）＋本文。
 
 ### 共通 frontmatter
-- id: 一意なID（例：law-lsa-001、rule-model-036、proc-001、man-001、dec-001、ev-001）
-- type: law / rule / procedure / manual / decision / evidence
+- id: 一意なID（例：law-lsa-001、rule-model-036、proc-001、man-001、set-001、dec-001、ev-001）
+- type: law / rule / procedure / manual / setting / decision / evidence
 - title: 名称
 - domain: 領域タグ（労働時間／休憩・休日／時間外・割増／賃金／有給／記録・届出／労働条件 など）
 - verified: 最終確認日（YYYY-MM-DD）
@@ -38,22 +38,29 @@
 
 ### type 別の追加項目
 - law: source（法令名と条番号、例：労働基準法 第37条）、source_url
-- rule / procedure / manual: covers（この文書が対応する law の id 配列）
+- rule / procedure / manual / setting: covers（この文書が対応する law の id 配列）
 - evidence: supports（裏づける law または rule の id 配列）、expires（証跡の有効期限。例：36協定の届出期間。任意）
 - decision: applies_to（判断対象の id 配列）、status（accepted / superseded）、supersedes（任意）
 
 紐づけは「社内文書の側が covers/supports で law を指す」一方向で持つ。law 側は逆引きで集計する（OKF記事の「別ファイル＋相互参照」の実装形）。
 
+### 設定文書（type: setting）の方針（2026-11-24追加）
+- 設定でカバーできる要件は、`type: setting` の文書を作り、設定の場所と内容を本文に書く。
+- DBの生値を無理に取得して機械照合する方式は採らない。設定は「設定でカバーしている」旨と場所・内容が宣言されていればよい。
+- 値が判明している場合に限り、本文に具体的な値を書いてよい。
+- `setting` は判定エンジンでは procedure / manual と同格の実施手段として扱う。状態・優先順位の定義自体は変更しない（新しい状態も追加しない）。
+- 設定は変更されやすいため、「どの要件が設定頼みか」を要件詳細・マトリクス・診断レポート・CLIで可視化する。
+
 ## 4. カバレッジ判定ロジック
 各 law 要件について、逆引きした文書と鮮度から状態を1つ決める。優先順位は上から：
 
 1. **適用外**：decision（status: accepted）が applies_to にこの law を含み、本文に適用除外の理由がある場合のみ。それ以外は適用外にしない。
-2. **未対応**：covers する rule / procedure / manual が1つもない。
-3. **鮮度切れ**：紐づく rule / procedure / manual のいずれかが stale_after 超過。evidence については「有効なものが1つもなく、期限切れのものだけがある」場合に鮮度切れとする（過去の届出など期限切れの証跡が残っていること自体は正常で、有効な証跡が別にあれば状態に影響しない。期限切れの証跡は詳細画面でその旨を表示する）。
-4. **手順なし**：rule はあるが procedure も manual もない。
-5. **根拠なし**：procedure / manual はあるが rule がない（※ rule を covers 対象として持たない文書だけが紐づいている場合に起こる）。
-6. **証跡なし**：rule と procedure/manual はあるが evidence がない。
-7. **対応済み**：rule と（procedure または manual）と evidence が揃い、鮮度も保たれている。
+2. **未対応**：covers する rule / procedure / manual / setting が1つもない。
+3. **鮮度切れ**：紐づく rule / procedure / manual / setting のいずれかが stale_after 超過。evidence については「有効なものが1つもなく、期限切れのものだけがある」場合に鮮度切れとする（過去の届出など期限切れの証跡が残っていること自体は正常で、有効な証跡が別にあれば状態に影響しない。期限切れの証跡は詳細画面でその旨を表示する）。
+4. **手順なし**：rule はあるが procedure も manual も setting もない。
+5. **根拠なし**：procedure / manual / setting はあるが rule がない（※ rule を covers 対象として持たない文書だけが紐づいている場合に起こる）。
+6. **証跡なし**：rule と procedure / manual / setting はあるが evidence がない。
+7. **対応済み**：rule と（procedure または manual または setting）と evidence が揃い、鮮度も保たれている。
 
 判定日は「今日」（実行日）を使う。ダッシュボードには状態別の件数と、領域別の対応済み率（対応済み÷（全要件−適用外））を出す。
 
@@ -61,7 +68,7 @@
 対象リポジトリ（バンドル）に対して、カバレッジ判定に加えて次を診断し、レポート画面に「良い点／悪い点／過剰」として出す。
 
 - 不足：未対応の要件、手順なし・根拠なし・証跡なし、鮮度切れの文書、期限切れの証跡。
-- 過剰・棚卸し対象：どの law にも covers されていない rule / procedure / manual（孤立文書。根拠のない規則や、不要になった手順の候補）、同じ要件への重複した文書の偏り。
+- 過剰・棚卸し対象：どの law にも covers されていない rule / procedure / manual / setting（孤立文書。根拠のない規則や、不要になった手順・設定の候補）、同じ要件への重複した文書の偏り。
 - 良い点：対応済みの要件（特に規則・手順・証跡が揃ったもの）、判断が decision として記録されている要件、鮮度が保たれている文書の割合。
 - 構造の健全性：参照切れ（存在しない id への covers）、frontmatter の必須項目欠け、type の妥当性。バンドルとしての形式エラーは診断の最初に別枠で出す。
 
@@ -71,12 +78,12 @@
 
 ## 5. 画面
 1. **ダッシュボード**（/）：全体カバー率、状態別件数カード、領域別バー、鮮度切れ・未対応の上位リスト。
-2. **マトリクス**（/matrix）：行＝law要件（領域でグルーピング）、列＝規則・手順・マニュアル・証跡・状態。各セルは有無と件数。行クリックで要件詳細へ。
+2. **マトリクス**（/matrix）：行＝law要件（領域でグルーピング）、列＝規則・手順・マニュアル・設定・証跡・状態。各セルは有無と件数。設定でカバーしている行には「設定」チップを表示する。行クリックで要件詳細へ。
 3. **ギャップ一覧**（/gaps）：対応済み以外の要件を状態・理由つきで一覧。状態でフィルタ可能。
 4. **要件詳細**（/law/[id]）：要件内容、出典、紐づく文書一覧（type別）、関連 decision、鮮度。
 5. **文書詳細**（/doc/[id]）：本文（Markdownレンダリング）、frontmatter 要約、covers 先の要件一覧とその状態。
 6. **ADR一覧**（/decisions）：decision の一覧（status、対象、日付）。
-7. **診断レポート**（/report）：対象バンドルの診断サマリ。カバー率と状態分布、良い点（対応が揃った要件、判断記録のある要件）、悪い点（状態別の不足一覧へのリンク）、過剰（孤立文書の一覧）、形式エラー。1画面で「どこが良くて、どこが悪いか」が分かることが目的。
+7. **診断レポート**（/report）：対象バンドルの診断サマリ。カバー率と状態分布、良い点（対応が揃った要件、判断記録のある要件）、悪い点（状態別の不足一覧へのリンク）、設定でカバーされている要件の件数と一覧、過剰（孤立文書の一覧）、形式エラー。1画面で「どこが良くて、どこが悪いか」が分かることが目的。
 
 デザイン：業務システムらしく、表とバッジ中心で落ち着いた配色。状態バッジは色分け（対応済み＝緑、未対応＝赤、手順なし／根拠なし／証跡なし＝黄、鮮度切れ＝橙、適用外＝灰）。スマホでも表が崩れないこと（横スクロール可の表＋要約カード）。
 
@@ -94,6 +101,7 @@
 - 証跡の期限切れ（36協定の evidence に過去の expires を設定）
 - 適用外（decision で理由を記録した要件）
 - 鮮度切れ（stale_after を過去日にした文書）
+- 設定でカバー（setting 文書が covers で宣言している要件）
 
 確認はローカル起動＋スクリーンショット目視（ダッシュボード、マトリクス、ギャップ、要件詳細）まで行う。
 
@@ -109,8 +117,8 @@
 ### 9-1. CLIチェッカー
 - コマンド：`npm run check -- --bundle <dir> [--json]`
 - `lib/` の判定ロジック（`loadBundle` / 判定エンジン）を再利用し、Web画面と同じ結果を出す。判定ロジックの複製は持たない。
-- テキスト出力：バンドル名、判定日、充足率、状態別件数、ギャップ一覧（id／タイトル／状態／理由）、形式エラー一覧。
-- JSON出力：`{ bundle, today, summary: { total, coverageRate, counts }, gaps: [{id,title,state,reason}], formatErrors: [{file,message}], laws: [{id,title,domain,state,reason}] }`
+- テキスト出力：バンドル名、判定日、充足率、状態別件数、設定でカバーされている要件の件数、ギャップ一覧（id／タイトル／状態／理由）、形式エラー一覧。
+- JSON出力：`{ bundle, today, summary: { total, coverageRate, counts }, gaps: [{id,title,state,reason}], formatErrors: [{file,message}], laws: [{id,title,domain,state,reason,viaSetting}] }`（`viaSetting` は setting が covers している場合に true）
 - 終了コード：形式エラーが1件以上なら 1、なければ 0。
 - 実装：`scripts/check.ts`（`tsx` で TypeScript の lib を直接実行）。
 

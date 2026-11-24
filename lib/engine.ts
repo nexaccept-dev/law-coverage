@@ -80,6 +80,9 @@ export function computeLawResult(
   const manuals = docs.filter(
     (d) => d.type === "manual" && d.covers.includes(law.id),
   );
+  const settings = docs.filter(
+    (d) => d.type === "setting" && d.covers.includes(law.id),
+  );
   const ruleIds = new Set(rules.map((d) => d.id));
   const evidences = docs.filter(
     (d) =>
@@ -89,7 +92,7 @@ export function computeLawResult(
   );
   const validEvidences = evidences.filter((d) => !isExpired(d, today));
   const expiredEvidences = evidences.filter((d) => isExpired(d, today));
-  const linkedDocs = [...rules, ...procedures, ...manuals];
+  const linkedDocs = [...rules, ...procedures, ...manuals, ...settings];
   const staleDocuments = linkedDocs.filter((d) => isStale(d, today));
   const lawDecisions = decisions.filter(
     (d) =>
@@ -106,14 +109,24 @@ export function computeLawResult(
   let status: CoverageStatus;
   if (exclusionDecision) {
     status = "excluded";
-  } else if (rules.length === 0 && procedures.length === 0 && manuals.length === 0) {
+  } else if (
+    rules.length === 0 &&
+    procedures.length === 0 &&
+    manuals.length === 0 &&
+    settings.length === 0
+  ) {
     status = "missing";
   } else if (staleDocuments.length > 0 || evidenceAllExpired) {
     status = "stale";
-  } else if (rules.length > 0 && procedures.length === 0 && manuals.length === 0) {
+  } else if (
+    rules.length > 0 &&
+    procedures.length === 0 &&
+    manuals.length === 0 &&
+    settings.length === 0
+  ) {
     status = "no_procedure";
   } else if (
-    (procedures.length > 0 || manuals.length > 0) &&
+    (procedures.length > 0 || manuals.length > 0 || settings.length > 0) &&
     rules.length === 0
   ) {
     status = "no_rule";
@@ -128,6 +141,7 @@ export function computeLawResult(
     rules,
     procedures,
     manuals,
+    settings,
     evidences,
     validEvidences,
     expiredEvidences,
@@ -143,6 +157,7 @@ export function computeLawResult(
     rules,
     procedures,
     manuals,
+    settings,
     evidences,
     validEvidences,
     expiredEvidences,
@@ -157,6 +172,7 @@ function buildReason(input: {
   rules: Doc[];
   procedures: Doc[];
   manuals: Doc[];
+  settings: Doc[];
   evidences: Doc[];
   validEvidences: Doc[];
   expiredEvidences: Doc[];
@@ -169,6 +185,7 @@ function buildReason(input: {
     rules,
     procedures,
     manuals,
+    settings,
     validEvidences,
     expiredEvidences,
     staleDocuments,
@@ -182,7 +199,7 @@ function buildReason(input: {
         exclusionDecision?.title ?? ""
       }）で適用除外の判断と理由が記録されています。`;
     case "missing":
-      return "covers にこの要件を指す規則・手順・マニュアルがありません。";
+      return "covers にこの要件を指す規則・手順・マニュアル・設定がありません。";
     case "stale": {
       const parts: string[] = [];
       if (staleDocuments.length > 0) {
@@ -202,19 +219,21 @@ function buildReason(input: {
       return parts.join("。") + "。";
     }
     case "no_procedure":
-      return `規則（${ids(rules)}）はありますが、手順・マニュアルがありません。`;
+      return `規則（${ids(rules)}）はありますが、手順・マニュアル・設定がありません。`;
     case "no_rule":
-      return `手順・マニュアル（${ids([
+      return `手順・マニュアル・設定（${ids([
         ...procedures,
         ...manuals,
+        ...settings,
       ])}）はありますが、根拠となる規則がありません。`;
     case "no_evidence":
-      return `規則（${ids(rules)}）と手順・マニュアル（${ids([
+      return `規則（${ids(rules)}）と手順・マニュアル・設定（${ids([
         ...procedures,
         ...manuals,
+        ...settings,
       ])}）はありますが、証跡がありません。`;
     case "covered":
-      return `規則・手順・証跡が揃い、鮮度も保たれています${
+      return `規則・実施手段（手順・マニュアル・設定）・証跡が揃い、鮮度も保たれています${
         validEvidences.length > 0
           ? `（有効な証跡: ${ids(validEvidences)}）`
           : ""
@@ -449,7 +468,8 @@ function buildDiagnostics(
     (doc) =>
       (doc.type === "rule" ||
         doc.type === "procedure" ||
-        doc.type === "manual") &&
+        doc.type === "manual" ||
+        doc.type === "setting") &&
       !doc.covers.some((coverId) => byId[coverId]?.type === "law"),
   );
 
@@ -460,16 +480,18 @@ function buildDiagnostics(
       rules: result.rules,
       procedures: result.procedures,
       manuals: result.manuals,
+      settings: result.settings,
     }))
     .filter(
       (bias) =>
         bias.rules.length > 1 ||
         bias.procedures.length > 1 ||
-        bias.manuals.length > 1,
+        bias.manuals.length > 1 ||
+        bias.settings.length > 1,
     );
 
   const freshnessCandidates = docs.filter((doc) =>
-    ["rule", "procedure", "manual", "evidence"].includes(doc.type),
+    ["rule", "procedure", "manual", "setting", "evidence"].includes(doc.type),
   );
   const staleOrExpiredDocs = freshnessCandidates.filter((doc) =>
     isStale(doc, today),
@@ -521,6 +543,7 @@ export function docsToShow(result: LawResult): Doc[] {
     ...result.rules,
     ...result.procedures,
     ...result.manuals,
+    ...result.settings,
     ...result.evidences,
   ];
 }

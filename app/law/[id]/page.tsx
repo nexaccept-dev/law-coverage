@@ -17,7 +17,7 @@ function DocCard({
 }: {
   doc: Doc;
   today: string;
-  category: "rule" | "procedure" | "manual" | "evidence";
+  category: "rule" | "procedure" | "manual" | "setting" | "evidence";
 }) {
   const expired = isExpired(doc, today);
   const stale = isStale(doc, today);
@@ -83,6 +83,16 @@ export default async function LawDetailPage({
         description={
           <div className="meta-strip">
             <StatusBadge status={result.status} />
+            {result.settings.length > 0 ? (
+              <span
+                className="badge badge-green"
+                title={`設定文書: ${result.settings
+                  .map((doc) => `${doc.id}（${doc.title}）`)
+                  .join("、")}`}
+              >
+                設定でカバー
+              </span>
+            ) : null}
             <span>出典: {law.source ?? "未設定"}</span>
             <span>verified {law.verified ?? "未設定"}</span>
           </div>
@@ -152,7 +162,8 @@ export default async function LawDetailPage({
               <h2>紐づく文書</h2>
               <span className="note">
                 規則 {result.rules.length} / 手順 {result.procedures.length} /
-                マニュアル {result.manuals.length} / 証跡 {result.evidences.length}
+                マニュアル {result.manuals.length} / 設定 {result.settings.length} /
+                証跡 {result.evidences.length}
               </span>
             </div>
 
@@ -191,6 +202,17 @@ export default async function LawDetailPage({
             ) : (
               result.manuals.map((doc) => (
                 <DocCard key={doc.id} doc={doc} today={bundle.today} category="manual" />
+              ))
+            )}
+
+            <h3 className="small" style={{ margin: "16px 0 6px" }}>
+              設定
+            </h3>
+            {result.settings.length === 0 ? (
+              <p className="empty">紐づく設定はありません。</p>
+            ) : (
+              result.settings.map((doc) => (
+                <DocCard key={doc.id} doc={doc} today={bundle.today} category="setting" />
               ))
             )}
 

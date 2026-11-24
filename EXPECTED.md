@@ -1,6 +1,6 @@
 # 検証用OKFバンドル 期待状態表（2026-11-24）
 
-- 対象バンドル：`~/workspace/law-coverage/bundle/`（law 50件、rule 20件、procedure 4件、manual 1件、evidence 3件、decision 1件、計79ファイル）
+- 対象バンドル：`~/workspace/law-coverage/bundle/`（law 50件、rule 20件、procedure 4件、manual 1件、setting 2件、evidence 3件、decision 1件、計81ファイル）
 - 判定基準：仕様書（2026-11-24-coverage-system-spec.md）4. の判定ロジックと優先順位（適用外 → 未対応 → 鮮度切れ → 手順なし → 根拠なし → 証跡なし → 対応済み）
 - 判定日：2026-11-24（すべての文書の verified は 2026-11-24。例外は意図的な異常系のみ）
 - 導出方法：バンドルの frontmatter を機械的に集計して導出し、手作業の導出と突き合わせて一致を確認した。
@@ -11,8 +11,8 @@
 |---|---|---|
 | 対応済み | 1 | law-lsa-007（※要確認。下記注記参照） |
 | 鮮度切れ | 1 | law-lsa-006 |
-| 手順なし | 17 | law-lsa-003, 004, 025, 026, 029, 030, 033, 034, 035, 041, 043, 044, 045, 046, 047, 048, 050 |
-| 証跡なし | 13 | law-lsa-001, 002, 005, 016, 017, 018, 019, 020, 021, 022, 023, 024, 032 |
+| 手順なし | 15 | law-lsa-003, 004, 025, 026, 033, 034, 035, 041, 043, 044, 045, 046, 047, 048, 050 |
+| 証跡なし | 15 | law-lsa-001, 002, 005, 016, 017, 018, 019, 020, 021, 022, 023, 024, 029, 030, 032 |
 | 根拠なし | 6 | law-lsa-009, 010, 011, 012, 013, 014 |
 | 未対応 | 11 | law-lsa-008, 027, 028, 031, 036, 037, 038, 039, 040, 042, 049 |
 | 適用外 | 1 | law-lsa-015 |
@@ -37,10 +37,10 @@
 | law-lsa-013 | 複数月平均の上限 | 根拠なし | proc-001 のみが covers。rule なし |
 | law-lsa-014 | 月45時間超の回数制限 | 根拠なし | proc-001 のみが covers。rule なし |
 | law-lsa-015 | 上限規制の特例業種 | 適用外 | dec-001（status: accepted）が applies_to に含み、本文に適用除外の理由（自動車運転業務の対象者がいない）を記載。優先順位1 |
-| law-lsa-016 | 時間外労働の割増率 | 証跡なし | rule-model-040 と proc-002 が covers。evidence なし |
-| law-lsa-017 | 月60時間超の割増率 | 証跡なし | rule-model-040 と proc-002 が covers。evidence なし |
-| law-lsa-018 | 法定休日労働の割増率 | 証跡なし | rule-model-040 と proc-002 が covers。evidence なし |
-| law-lsa-019 | 深夜労働の割増率 | 証跡なし | rule-model-040 と proc-002 が covers。evidence なし |
+| law-lsa-016 | 時間外労働の割増率 | 証跡なし | rule-model-040 と proc-002、set-001（設定）が covers。evidence なし。設定でカバー（viaSetting: true） |
+| law-lsa-017 | 月60時間超の割増率 | 証跡なし | rule-model-040 と proc-002、set-001（設定）が covers。evidence なし。設定でカバー（viaSetting: true） |
+| law-lsa-018 | 法定休日労働の割増率 | 証跡なし | rule-model-040 と proc-002、set-001（設定）が covers。evidence なし。設定でカバー（viaSetting: true） |
+| law-lsa-019 | 深夜労働の割増率 | 証跡なし | rule-model-040 と proc-002、set-001（設定）が covers。evidence なし。設定でカバー（viaSetting: true） |
 | law-lsa-020 | 代替休暇の労使協定 | 証跡なし | rule-model-042 と proc-002 が covers。evidence なし |
 | law-lsa-021 | 割増賃金の算定基礎 | 証跡なし | rule-model-040 と proc-002 が covers。evidence なし |
 | law-lsa-022 | 賃金支払の原則（通貨・直接・全額） | 証跡なし | rule-model-047 と proc-002 が covers。evidence なし |
@@ -50,8 +50,8 @@
 | law-lsa-026 | 休業手当 | 手順なし | rule-model-044 のみ。procedure／manual なし |
 | law-lsa-027 | 最低賃金 | 未対応 | covers／supports する文書なし（対応表でも「モデル就業規則に条項なし」） |
 | law-lsa-028 | 死亡・退職時の賃金支払 | 未対応 | covers／supports する文書なし（対応表でも「モデル就業規則に条項なし」） |
-| law-lsa-029 | 有給休暇の付与要件と初回日数 | 手順なし | rule-model-023 のみ。procedure／manual なし |
-| law-lsa-030 | 有給休暇の加算日数 | 手順なし | rule-model-023 のみ。procedure／manual なし |
+| law-lsa-029 | 有給休暇の付与要件と初回日数 | 証跡なし | rule-model-023 と set-002（設定）が covers。procedure／manual はないが設定が実施手段として数えられ、evidence なしのため証跡なし。設定でカバー（viaSetting: true） |
+| law-lsa-030 | 有給休暇の加算日数 | 証跡なし | rule-model-023 と set-002（設定）が covers。procedure／manual はないが設定が実施手段として数えられ、evidence なしのため証跡なし。設定でカバー（viaSetting: true） |
 | law-lsa-031 | 短時間労働者への比例付与 | 未対応 | covers／supports する文書なし（対応表でも「モデル就業規則に条項なし」） |
 | law-lsa-032 | 年5日取得義務 | 証跡なし | rule-model-023 と proc-003 が covers。evidence なし |
 | law-lsa-033 | 時季変更権の範囲 | 手順なし | rule-model-023 のみ。procedure／manual なし |
@@ -79,3 +79,4 @@
 2. **proc-999（孤立文書）**：covers が空の procedure。どの law の状態にも影響しない。診断レポート側の「過剰・棚卸し対象」として検出されることを期待する（仕様4-2.）。
 3. **law-lsa-041 の優先順位**：evidence（ev-002）はあるが procedure／manual がないため、証跡なしではなく手順なしになる。優先順位の適用例として意図した配置。
 4. **カバー率の参考値**：対応済み率は 1 ÷（50 − 適用外1）＝ 約2.0%。モデル就業規則は「規則」層の雛形であり、手順・証跡は実務側で用意するものなので、検証用バンドルとしてはこの低さが仕様どおりの結果である（ダッシュボードの表示確認用）。
+5. **設定文書（set-001 / set-002）**：設定は procedure / manual と同格の実施手段として扱う。DBの生値の機械照合はせず、設定場所と内容が本文に書かれていることをもってカバーとする。law-lsa-016〜019 は set-001、law-lsa-029/030 は set-002 により「設定でカバー」となり、029/030 は手順なしから証跡なしに変わる。それ以外の要件の状態は変わらない。

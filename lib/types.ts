@@ -3,6 +3,7 @@ export const DOC_TYPES = [
   "rule",
   "procedure",
   "manual",
+  "setting",
   "decision",
   "evidence",
 ] as const;
@@ -113,6 +114,7 @@ export const TYPE_LABELS: Record<DocType, string> = {
   rule: "規則",
   procedure: "手順",
   manual: "マニュアル",
+  setting: "設定",
   decision: "意思決定（ADR）",
   evidence: "証跡",
 };
@@ -124,6 +126,7 @@ export interface LawResult {
   rules: Doc[];
   procedures: Doc[];
   manuals: Doc[];
+  settings: Doc[];
   evidences: Doc[];
   validEvidences: Doc[];
   expiredEvidences: Doc[];
@@ -144,6 +147,7 @@ export interface DuplicateBias {
   rules: Doc[];
   procedures: Doc[];
   manuals: Doc[];
+  settings: Doc[];
 }
 
 export interface DomainSummary {

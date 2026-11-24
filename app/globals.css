@@ -404,6 +404,11 @@ code {
   border-color: #99f6e4;
   color: #0f766e;
 }
+.type-setting {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
 .type-evidence {
   background: #fdf4ff;
   border-color: #f5d0fe;

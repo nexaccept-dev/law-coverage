@@ -145,6 +145,7 @@ export default async function DocDetailPage({
                 <span>規則 {lawResult.rules.length}</span>
                 <span>手順 {lawResult.procedures.length}</span>
                 <span>マニュアル {lawResult.manuals.length}</span>
+                <span>設定 {lawResult.settings.length}</span>
                 <span>証跡 {lawResult.evidences.length}</span>
               </div>
             </div>
@@ -152,7 +153,8 @@ export default async function DocDetailPage({
 
           {doc.type === "rule" ||
           doc.type === "procedure" ||
-          doc.type === "manual" ? (
+          doc.type === "manual" ||
+          doc.type === "setting" ? (
             <div className="card">
               <div className="section-head">
                 <h2>covers 先の要件</h2>

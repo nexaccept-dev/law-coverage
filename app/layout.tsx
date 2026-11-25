@@ -53,6 +53,11 @@ export default function RootLayout({
             バンドルは環境変数 <code>BUNDLE_DIR</code> で切り替えできます（既定は同梱の
             <code>bundle/</code>）。
           </div>
+          <div>
+            <a href="mailto:harukaze-works@muse.ai?subject=%E3%80%90%E6%B3%95%E4%BB%A4%E3%82%AB%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8%E7%AE%A1%E7%90%86%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%80%91%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">
+              お問い合わせ
+            </a>
+          </div>
         </footer>
         <Analytics />
       </body>

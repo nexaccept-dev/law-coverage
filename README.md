@@ -2,6 +2,18 @@
 
 法令要件（OKF バンドルの `type: law`）と社内文書（規則・手順・マニュアル・設定・証跡・意思決定）の紐づけから、カバレッジの過不足と鮮度を機械判定して可視化する Next.js アプリです。判定結果はダッシュボード、マトリクス、ギャップ一覧、診断レポートで確認できます。
 
+**デモ:** https://law-coverage.vercel.app （同梱サンプルバンドル81件・労働基準法50要件の判定結果をそのまま表示）
+
+**クローン:**
+```bash
+git clone https://github.com/nexaccept-dev/law-coverage.git
+cd law-coverage
+npm install
+```
+
+![ダッシュボード](docs/images/dashboard.png)
+_同梱サンプルでの判定例：対応済み1件・未対応11件・手順なし15件・証跡なし15件など、不足の内訳が状態別に見える_
+
 ## 想定運用フロー
 
 1. このリポジトリをクローンする。
@@ -57,3 +69,7 @@
 - `AGENT-INSTRUCTIONS.md` — エージェントが調査・文書化するときの共通手順
 - `.claude/commands/coverage-check.md` — Claude Code 用スラッシュコマンド
 - `template/` — 新しい領域を始めるときのひな形
+
+## ライセンス
+
+MIT License（`LICENSE` を参照）

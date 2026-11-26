@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKFってなに？ ― 図解まとめ</title>
+<style>
+  body { font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif; background: #fdf8f0; color: #3a3230; margin: 0; padding: 24px 16px 48px; line-height: 1.9; font-size: 17px; }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 26px; line-height: 1.5; margin: 8px 0 4px; }
+  .sub { color: #8a7a70; font-size: 14px; margin-bottom: 24px; }
+  h2 { font-size: 20px; margin: 36px 0 10px; padding-left: 12px; border-left: 6px solid #f2a65a; }
+  .card { background: #fff; border: 2px solid #f0e2d0; border-radius: 16px; padding: 16px 20px; margin: 14px 0; }
+  .big { font-size: 20px; font-weight: bold; }
+  .flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+  .step { flex: 1 1 150px; background: #fff; border: 2px solid #e08a7b; border-radius: 16px; padding: 12px 14px; text-align: center; }
+  .step .n { font-size: 22px; }
+  .step .t { font-weight: bold; display: block; margin: 4px 0; }
+  .step p { margin: 0; font-size: 14px; line-height: 1.6; }
+  .arrow { align-self: center; font-size: 20px; color: #e08a7b; font-weight: bold; }
+  ol.points { padding-left: 22px; }
+  ol.points li { margin: 10px 0; }
+  .guard { border-color: #9ec49a; }
+  .termlink { display: block; background: #fff; border: 2px solid #c9d8ef; border-radius: 16px; padding: 12px 20px; margin: 10px 0; text-decoration: none; color: #3a3230; }
+  .termlink .w { font-weight: bold; font-size: 18px; color: #2f4d7a; }
+  .termlink .d { display: block; font-size: 14px; color: #8a7a70; line-height: 1.6; }
+  .summary { background: #3a3230; color: #fdf8f0; border-radius: 16px; padding: 18px 22px; margin-top: 36px; }
+  .summary .t { font-weight: bold; color: #f2a65a; }
+  .note { font-size: 14px; color: #8a7a70; }
+  .fake { background: #fdf0ee; border: 2px dashed #e08a7b; border-radius: 12px; padding: 10px 16px; font-size: 15px; }
+  .backlink { margin-top: 28px; font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>OKFってなに？</h1>
+<p class="sub">note記事「AIに101ファイルの知識だけを渡したら、実務の質問12問に全部答えた ― OKFという情報整理の規格を試した記録」の図解まとめです。</p>
+
+<h2>ひとことで言うと</h2>
+<div class="card">
+  <p class="big">OKFは、AIに渡す知識を「1ファイルに1つのこと」という約束で整理しておく、決まりごとの名前です。</p>
+</div>
+
+<h2>たとえると</h2>
+<p>カード式のノートのようなものです。</p>
+<p>1枚のカードには1つのことだけを書き、カードの頭には名札を付けます。カード同士はひも（リンク）でつないでおいて、束の先頭には目次を置く。</p>
+<p>こうしておくと、AIは目次から必要なカードだけを順に開いて読めます。人間にとっても、「どのカードを直せばいいか」がすぐ分かります。</p>
+
+<h2>OKFのルールは、これだけです</h2>
+<div class="flow">
+  <div class="step"><span class="n">🗂️</span><span class="t">1. 1ファイル1概念</span><p>1つのファイルには、1つのことだけを書く</p></div>
+  <span class="arrow">→</span>
+  <div class="step"><span class="n">🏷️</span><span class="t">2. 先頭に名札</span><p>ファイルの頭に名札（フロントマター）を付ける。必須は「種類」だけ</p></div>
+  <span class="arrow">→</span>
+  <div class="step"><span class="n">🔗</span><span class="t">3. リンクでつなぐ</span><p>ファイル同士は普通のリンクでつなぎ、目次からたどれるようにする</p></div>
+</div>
+<p>中身はただの文章ファイル（Markdown）なので、特別な道具は要りません。サービスでもアプリでもなく、「書き方の約束」そのものがOKFです。</p>
+
+<h2>記事で試したこと</h2>
+<ol class="points">
+  <li><strong>小さく作ってみた：</strong>自分のアプリの情報をOKF形式で書いてみたら、AIの答えに「根拠はこのファイル」と示せるようになった。</li>
+  <li><strong>大きく試してみた：</strong>架空の会社のサポート知識を101ファイルにまとめて、別のAIに渡し、実務の質問を12問解かせたら、全部正解した。</li>
+  <li><strong>弱点も見えた：</strong>目次に載っていないファイルや、リンクが切れた先は、リンクをたどるだけでは届かなかった。</li>
+</ol>
+<p>どうやって作り、どう採点したかの詳しい記録は、記事の有料パートにまとめられています。</p>
+
+<h2>この記事で分かること</h2>
+<div class="card guard">
+  <ol class="points">
+    <li><strong>なぜ資料はいつも古くなるのか。</strong>社内Wikiや共有ドキュメントが陳腐化する理由と、「更新をAIの仕事にする」という発想の転換。</li>
+    <li><strong>OKFのルールの少なさ。</strong>1ファイル1概念と、名札は種類だけ必須という、驚くほど小さな約束事。</li>
+    <li><strong>マニュアルと内部資料のズレ。</strong>仕様書は直したのにマニュアルは古いまま、という事故をどう見つけるか。</li>
+    <li><strong>事例と注意点。</strong>公開されている採用事例と、「まだ標準ではない」という正直な留保。</li>
+  </ol>
+</div>
+<p class="note">※このページは記事の概要です。実演の全記録や、導入の手順、古くならないための工夫の具体例は、記事の有料パートで紹介しています。</p>
+
+<h2>言葉の説明</h2>
+<p>記事に出てくる、ちょっと難しい言葉を1語ずつ別のページで説明しています。</p>
+
+<a class="termlink" href="https://law-coverage.vercel.app/articles/terms/okf.html"><span class="w">OKF</span><span class="d">AI向けの「知識の書き方」の約束事そのもの</span></a>
+<a class="termlink" href="https://law-coverage.vercel.app/articles/terms/bundle.html"><span class="w">バンドル</span><span class="d">OKFのファイル全部をひとまとめにした「束」</span></a>
+<a class="termlink" href="https://law-coverage.vercel.app/articles/terms/frontmatter.html"><span class="w">フロントマター</span><span class="d">ファイルの先頭に付ける「名札」</span></a>
+<a class="termlink" href="https://law-coverage.vercel.app/articles/terms/markdown.html"><span class="w">Markdown</span><span class="d">記号で見出しやリンクを書く、文章の書き方</span></a>
+<a class="termlink" href="https://law-coverage.vercel.app/articles/terms/ai-agent.html"><span class="w">AIエージェント</span><span class="d">自分で段取りして仕事を進めるAI</span></a>
+<a class="termlink" href="https://law-coverage.vercel.app/articles/terms/adr.html"><span class="w">ADR</span><span class="d">「なぜそう決めたか」を残す記録</span></a>
+<a class="termlink" href="https://law-coverage.vercel.app/articles/terms/ci.html"><span class="w">CI</span><span class="d">変更のたびに自動でチェックを回す仕組み</span></a>
+
+<div class="summary">
+  <p class="t">3行まとめ</p>
+  <p>1. OKFは、AIに渡す知識を「1ファイル1概念」で整理する、小さな約束事。<br>
+  2. 記事では101ファイルの知識だけを渡したAIが、実務の質問12問に全部答えた。<br>
+  3. いちばんの収穫は形式より「更新をAIの仕事にする」という考え方。</p>
+</div>
+
+<p class="backlink">このページが置いてあるサイトはこちら：<a href="https://law-coverage.vercel.app">法令カバレッジ管理システム</a>（法律の要件と社内規則の対応を、OKF形式のファイルの集まりで判定する仕組みです）</p>
+
+</div>
+</body>
+</html>
